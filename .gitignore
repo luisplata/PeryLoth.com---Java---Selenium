@@ -1,0 +1,35 @@
+./idea
+.idea/
+# Archivos y carpetas generados por Maven
+target/
+!.mvn/wrapper/maven-wrapper.jar
+.mvn/wrapper/maven-wrapper.properties
+.mvn/
+
+# Configuración local del entorno
+*.log
+*.out
+*.class
+*.jar
+*.war
+*.ear
+
+# Archivos de configuración de IntelliJ/JetBrains Aqua
+.idea/
+*.iml
+*.ipr
+*.iws
+
+# Archivos de configuración del sistema operativo
+.DS_Store
+Thumbs.db
+
+# Archivos de configuración de Docker
+*.env
+docker-compose.override.yml
+
+# Archivos generados por el IDE
+.vscode/
+*.swp
+*.swo
+*~
