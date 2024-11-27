@@ -34,7 +34,9 @@ jobs:
         if: matrix.browser == 'chrome'
         run: |
           echo "CHROME_PATH=${{ steps.setup-chrome.outputs.chrome-path }}" >> $GITHUB_ENV
+          echo "CHROME_VERSION=${{ steps.setup-chrome.outputs.chrome-version }}" >> $GITHUB_ENV
           echo "CHROMEDRIVER_PATH=${{ steps.setup-chrome.outputs.chromedriver-path }}" >> $GITHUB_ENV
+          echo "CHROMEDRIVER_VERSION=${{ steps.setup-chrome.outputs.chromedriver-version }}" >> $GITHUB_ENV
 
       - name: Setup Firefox
         if: matrix.browser == 'firefox'
@@ -43,17 +45,18 @@ jobs:
         with:
           firefox-version: 'latest'
 
-      - name: Setup GeckoDriver
-        if: matrix.browser == 'firefox'
-        uses: mozilla/geckodriver-action@v1
-        with:
-          version: latest
-
       - name: Set Firefox Environment Variables
         if: matrix.browser == 'firefox'
         run: |
           echo "FIREFOX_PATH=${{ steps.setup-firefox.outputs.firefox-path }}" >> $GITHUB_ENV
-          echo "FIREFOX_DRIVER_PATH=/usr/local/bin/geckodriver" >> $GITHUB_ENV
+          echo "FIREFOX_VERSION=${{ steps.setup-firefox.outputs.firefox-version }}" >> $GITHUB_ENV
+
+      - name: Install geckodriver
+        if: matrix.browser == 'firefox'
+        uses: actions/driver-installer@v1
+        with:
+          driver: geckodriver
+          geckodriver-version: latest
 
       - name: Build and Test
         run: |
@@ -61,5 +64,4 @@ jobs:
           -Dbrowser=${{ matrix.browser }} \
           -DchromePath=$CHROME_PATH \
           -DchromeDriverPath=$CHROMEDRIVER_PATH \
-          -DfirefoxPath=$FIREFOX_PATH \
-          -DfirefoxDriverPath=$FIREFOX_DRIVER_PATH
+          -DfirefoxPath=$FIREFOX_PATH
