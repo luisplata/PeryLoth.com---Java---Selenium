@@ -51,12 +51,12 @@ jobs:
           echo "FIREFOX_PATH=${{ steps.setup-firefox.outputs.firefox-path }}" >> $GITHUB_ENV
           echo "FIREFOX_VERSION=${{ steps.setup-firefox.outputs.firefox-version }}" >> $GITHUB_ENV
 
-      - name: Install geckodriver
-        if: matrix.browser == 'firefox'
-        uses: actions/driver-installer@v1
-        with:
-          driver: geckodriver
-          geckodriver-version: latest
+      - name: Download geckodriver
+        run: |
+          GECKODRIVER_VERSION=$(curl -s https://api.github.com/repos/mozilla/geckodriver/releases/latest | jq -r '.tag_name')
+          wget "https://github.com/mozilla/geckodriver/releases/download/$GECKODRIVER_VERSION/geckodriver-$GECKODRIVER_VERSION-linux64.tar.gz" -O geckodriver.tar.gz
+          tar -xzf geckodriver.tar.gz -C /usr/local/bin
+          rm geckodriver.tar.gz
 
       - name: Build and Test
         run: |
