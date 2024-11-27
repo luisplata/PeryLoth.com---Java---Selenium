@@ -22,7 +22,11 @@ public class BaseTest {
             options.addArguments("--remote-allow-origins=*"); // Habilita orígenes remotos
             driver = new ChromeDriver(options);
         } else if (browser.equalsIgnoreCase("firefox")) {
-            System.setProperty("webdriver.gecko.driver", "D:\\QA_Automatiozacion\\geckodriver-v0.35.0-win64\\geckodriver.exe");
+            if (System.getProperty("os.name").toLowerCase().contains("win")) {
+                System.setProperty("webdriver.gecko.driver", "D:\\QA_Automatiozacion\\geckodriver-v0.35.0-win64\\geckodriver.exe");
+            } else {
+                System.setProperty("webdriver.gecko.driver", "/usr/local/bin/geckodriver");
+            }
             FirefoxOptions options = new FirefoxOptions();
             options.setBinary("C:\\Program Files\\Mozilla Firefox\\firefox.exe");
             driver = new FirefoxDriver(options);
