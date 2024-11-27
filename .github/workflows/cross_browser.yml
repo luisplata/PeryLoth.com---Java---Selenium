@@ -1,4 +1,4 @@
-name: Cross-Browser Testing
+﻿name: Cross-Browser Testing
 
 on:
   push:
