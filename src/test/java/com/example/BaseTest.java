@@ -2,12 +2,12 @@ package com.example;
 
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxOptions;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Parameters;
-import org.openqa.selenium.chrome.ChromeOptions;
 
 public class BaseTest {
 
@@ -17,9 +17,13 @@ public class BaseTest {
     @Parameters("browser")
     public void setUp(String browser) {
         if (browser.equalsIgnoreCase("chrome")) {
-            System.setProperty("webdriver.chrome.driver", "D:\\QA_Automatiozacion\\chromedriver-win64\\chromedriver.exe");
+            if (System.getProperty("os.name").toLowerCase().contains("win")) {
+                System.setProperty("webdriver.chrome.driver", "D:\\QA_Automatiozacion\\chromedriver-win64\\chromedriver.exe");
+            } else {
+                System.setProperty("webdriver.chrome.driver", "/usr/local/bin/chromedriver");
+            }
             ChromeOptions options = new ChromeOptions();
-            options.addArguments("--remote-allow-origins=*"); // Habilita orígenes remotos
+            options.addArguments("--remote-allow-origins=*");
             driver = new ChromeDriver(options);
         } else if (browser.equalsIgnoreCase("firefox")) {
             if (System.getProperty("os.name").toLowerCase().contains("win")) {
@@ -28,7 +32,6 @@ public class BaseTest {
                 System.setProperty("webdriver.gecko.driver", "/usr/local/bin/geckodriver");
             }
             FirefoxOptions options = new FirefoxOptions();
-            options.setBinary("C:\\Program Files\\Mozilla Firefox\\firefox.exe");
             driver = new FirefoxDriver(options);
         }
         driver.manage().window().maximize();
