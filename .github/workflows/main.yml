@@ -17,6 +17,7 @@ jobs:
         uses: actions/setup-java@v3
         with:
           java-version: '23'
+          distribution: 'temurin' # Especifica la distribución de Java (temurin, zulu, etc.)
 
       - name: Build Docker Image
         run: docker build -t selenium-test .
