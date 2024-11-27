@@ -23,7 +23,10 @@ public class BaseTest {
                 System.setProperty("webdriver.chrome.driver", "/usr/local/bin/chromedriver");
             }
             ChromeOptions options = new ChromeOptions();
-            options.addArguments("--remote-allow-origins=*");
+            options.addArguments("--headless"); // Modo sin interfaz gráfica
+            options.addArguments("--no-sandbox"); // Evita problemas de permisos en contenedores
+            options.addArguments("--disable-dev-shm-usage"); // Usa /tmp para almacenamiento compartido
+            options.addArguments("--remote-allow-origins=*"); // Permite todas las conexiones remotas
             driver = new ChromeDriver(options);
         } else if (browser.equalsIgnoreCase("firefox")) {
             if (System.getProperty("os.name").toLowerCase().contains("win")) {
