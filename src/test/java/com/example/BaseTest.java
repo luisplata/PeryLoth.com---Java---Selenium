@@ -35,6 +35,7 @@ public class BaseTest {
                 System.setProperty("webdriver.gecko.driver", "/usr/local/bin/geckodriver");
             }
             FirefoxOptions options = new FirefoxOptions();
+            options.addArguments("--headless"); // Modo sin interfaz gráfica
             driver = new FirefoxDriver(options);
         }
         driver.manage().window().maximize();
