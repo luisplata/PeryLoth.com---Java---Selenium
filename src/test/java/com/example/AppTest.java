@@ -49,8 +49,9 @@ public class AppTest extends BaseTest
     public void testSingleH1() {
         List<WebElement> h1Elements = wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.tagName("h1")));
         Assert.assertEquals(h1Elements.size(), 1, "Debe haber solo 1 etiqueta <h1> en la página.");
-        System.out.println("Se encontró el <h1> con el siguiente contenido: " + h1Elements.get(0).getText());
-        Assert.assertEquals(h1Elements.get(0).getText(), "Luis Enrique Plata Osorio", "El contenido del <h1> no es correcto.");
+
+        boolean h1Text = wait.until(ExpectedConditions.textToBePresentInElement(h1Elements.get(0), "Luis Enrique Plata Osorio"));
+        Assert.assertTrue(h1Text, "El contenido del <h1> no es correcto.");
     }
 
     @Test
@@ -58,10 +59,11 @@ public class AppTest extends BaseTest
 
         List<WebElement> h2Elements = wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.tagName("h2")));
         Assert.assertEquals(h2Elements.size(), 2, "Debe haber solo 2 etiqueta <h2> en la página.");
-        for (WebElement h2 : h2Elements) {
-            System.out.println(h2.getText());
-            Assert.assertTrue(h2.getText().equals("Unity Developer") || h2.getText().equals("Projects"), "El contenido del <h2> no es correcto.");
-        }
+        boolean h2Text = wait.until(ExpectedConditions.textToBePresentInElement(h2Elements.get(0), "Unity Developer"));
+        Assert.assertTrue(h2Text, "El contenido del <h2> no es correcto.");
+
+        boolean h2Text2 = wait.until(ExpectedConditions.textToBePresentInElement(h2Elements.get(1), "Projects"));
+        Assert.assertTrue(h2Text2, "El contenido del <h2> no es correcto.");
     }
 
     @Test
