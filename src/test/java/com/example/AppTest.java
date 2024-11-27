@@ -21,22 +21,16 @@ public class AppTest extends BaseTest
     private String baseUrl = "https://peryloth.com/";
     private WebDriverWait wait;
 
-    private void Wait(int seconds) {
-        try {
-            Thread.sleep(seconds * 1000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-    }
     @BeforeClass
     public void setUp() {
         driver.get(baseUrl);
         wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+        driver.manage().timeouts().pageLoadTimeout(Duration.ofSeconds(30));
     }
 
     @BeforeTest
     public void beforeTest() {
-        Wait(1);
+        System.out.println("Ejecutando pruebas...");
     }
 
     @AfterClass
@@ -53,16 +47,16 @@ public class AppTest extends BaseTest
 
     @Test
     public void testSingleH1() {
-        Wait(1);
-        List<WebElement> h1Elements = driver.findElements(By.tagName("h1"));
+        List<WebElement> h1Elements = wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.tagName("h1")));
         Assert.assertEquals(h1Elements.size(), 1, "Debe haber solo 1 etiqueta <h1> en la página.");
+        System.out.println("Se encontró el <h1> con el siguiente contenido: " + h1Elements.get(0).getText());
         Assert.assertEquals(h1Elements.get(0).getText(), "Luis Enrique Plata Osorio", "El contenido del <h1> no es correcto.");
     }
 
     @Test
     public void testSingleH2() {
-        Wait(1);
-        List<WebElement> h2Elements = driver.findElements(By.tagName("h2"));
+
+        List<WebElement> h2Elements = wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.tagName("h2")));
         Assert.assertEquals(h2Elements.size(), 2, "Debe haber solo 2 etiqueta <h2> en la página.");
         for (WebElement h2 : h2Elements) {
             System.out.println(h2.getText());
