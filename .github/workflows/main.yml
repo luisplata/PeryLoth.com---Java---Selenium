@@ -1,10 +1,3 @@
-name: Cross-Browser Testing
-
-on:
-  push:
-    branches:
-      - main
-
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -34,9 +27,15 @@ jobs:
         if: matrix.browser == 'chrome'
         run: |
           echo "CHROME_PATH=${{ steps.setup-chrome.outputs.chrome-path }}" >> $GITHUB_ENV
-          echo "CHROME_VERSION=${{ steps.setup-chrome.outputs.chrome-version }}" >> $GITHUB_ENV
           echo "CHROMEDRIVER_PATH=${{ steps.setup-chrome.outputs.chromedriver-path }}" >> $GITHUB_ENV
-          echo "CHROMEDRIVER_VERSION=${{ steps.setup-chrome.outputs.chromedriver-version }}" >> $GITHUB_ENV
+
+      - name: Install geckodriver
+        if: matrix.browser == 'firefox'
+        run: |
+          wget -q "https://github.com/mozilla/geckodriver/releases/latest/download/geckodriver-linux64.tar.gz" -O geckodriver.tar.gz
+          tar -xvzf geckodriver.tar.gz -C /usr/local/bin
+          rm geckodriver.tar.gz
+          echo "GECKODRIVER_PATH=/usr/local/bin/geckodriver" >> $GITHUB_ENV
 
       - name: Setup Firefox
         if: matrix.browser == 'firefox'
@@ -49,19 +48,16 @@ jobs:
         if: matrix.browser == 'firefox'
         run: |
           echo "FIREFOX_PATH=${{ steps.setup-firefox.outputs.firefox-path }}" >> $GITHUB_ENV
-          echo "FIREFOX_VERSION=${{ steps.setup-firefox.outputs.firefox-version }}" >> $GITHUB_ENV
-
-      - name: Download geckodriver
-        run: |
-          GECKODRIVER_VERSION=$(curl -s https://api.github.com/repos/mozilla/geckodriver/releases/latest | jq -r '.tag_name')
-          wget "https://github.com/mozilla/geckodriver/releases/download/$GECKODRIVER_VERSION/geckodriver-$GECKODRIVER_VERSION-linux64.tar.gz" -O geckodriver.tar.gz
-          tar -xzf geckodriver.tar.gz -C /usr/local/bin
-          rm geckodriver.tar.gz
-
+          
       - name: Build and Test
         run: |
+          echo "CHROME_PATH=$CHROME_PATH"
+          echo "CHROMEDRIVER_PATH=$CHROMEDRIVER_PATH"
+          echo "FIREFOX_PATH=$FIREFOX_PATH"
+          echo "GECKODRIVER_PATH=$GECKODRIVER_PATH"
           mvn clean test \
           -Dbrowser=${{ matrix.browser }} \
           -DchromePath=$CHROME_PATH \
           -DchromeDriverPath=$CHROMEDRIVER_PATH \
-          -DfirefoxPath=$FIREFOX_PATH
+          -DfirefoxPath=$FIREFOX_PATH \
+          -DfirefoxDriverPath=$GECKODRIVER_PATH
