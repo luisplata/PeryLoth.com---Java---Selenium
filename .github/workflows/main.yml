@@ -1,4 +1,4 @@
-name: Cross-Browser Testing
+name: Selenium Tests
 
 on:
   push:
@@ -9,10 +9,6 @@ jobs:
   test:
     runs-on: ubuntu-latest
 
-    strategy:
-      matrix:
-        browser: [chrome, firefox] # Probar en múltiples navegadores
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -20,22 +16,26 @@ jobs:
       - name: Set up JDK
         uses: actions/setup-java@v3
         with:
-          java-version: '23'
+          java-version: '17'
           distribution: 'temurin'
 
       - name: Install ChromeDriver
-        if: matrix.browser == 'chrome'
         run: |
-          sudo apt-get update
-          sudo apt-get install -y chromium-chromedriver
-          export PATH=$PATH:/usr/lib/chromium-browser/
+          wget https://chromedriver.storage.googleapis.com/131.0.5563.41/chromedriver_linux64.zip
+          unzip chromedriver_linux64.zip
+          sudo mv chromedriver /usr/local/bin/
+
+      - name: Install Chromium
+        run: sudo apt-get install -y chromium-browser --no-install-recommends
 
       - name: Install GeckoDriver
-        if: matrix.browser == 'firefox'
         run: |
-          sudo apt-get update
-          sudo apt-get install -y firefox-geckodriver
-          export PATH=$PATH:/usr/bin/
+          wget https://github.com/mozilla/geckodriver/releases/download/v0.35.0/geckodriver-v0.35.0-linux64.tar.gz
+          tar -xvzf geckodriver-v0.35.0-linux64.tar.gz
+          sudo mv geckodriver /usr/local/bin/
+
+      - name: Install Firefox
+        run: sudo apt-get install -y firefox
 
       - name: Build and Test
-        run: mvn clean test -Dbrowser=${{ matrix.browser }}
+        run: mvn clean test
