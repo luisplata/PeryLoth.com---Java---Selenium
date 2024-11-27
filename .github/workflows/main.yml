@@ -11,7 +11,7 @@ jobs:
 
     strategy:
       matrix:
-        browser: [chrome, firefox]
+        browser: [chrome, firefox] # Probar en múltiples navegadores
 
     steps:
       - name: Checkout code
@@ -24,50 +24,19 @@ jobs:
           distribution: 'temurin'
 
       # Configuración de Chrome
-      - name: Install Google Chrome
+      - name: Setup Chrome
         if: matrix.browser == 'chrome'
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y google-chrome-stable || echo "Error installing Chrome"
-          if ! command -v google-chrome &> /dev/null; then
-            echo "Google Chrome not found"
-            exit 1
-          fi
-          google-chrome --version
-
-      - name: Install ChromeDriver
-        if: matrix.browser == 'chrome'
-        run: |
-          CHROME_VERSION=$(google-chrome --version | awk '{print $3}' | cut -d '.' -f 1 || echo "131")
-          DRIVER_VERSION=$(wget -qO- "https://chromedriver.storage.googleapis.com/LATEST_RELEASE_$CHROME_VERSION" || echo "131.0.5563.41")
-          wget https://chromedriver.storage.googleapis.com/$DRIVER_VERSION/chromedriver_linux64.zip
-          unzip chromedriver_linux64.zip
-          sudo mv chromedriver /usr/local/bin/
-          chromedriver --version
+        uses: browser-actions/setup-chrome@v1
+        with:
+          chrome-version: 'latest'
+          install-chromedriver: true
 
       # Configuración de Firefox
-      - name: Install Firefox Directly
+      - name: Setup Firefox
         if: matrix.browser == 'firefox'
-        run: |
-          sudo apt-get update
-          wget -q --spider "https://ftp.mozilla.org/pub/firefox/releases/132.0/linux-x86_64/en-US/firefox-132.0.tar.bz2"
-          if [ $? -ne 0 ]; then
-            echo "Firefox URL not reachable"
-            exit 1
-          fi
-          wget -q "https://ftp.mozilla.org/pub/firefox/releases/132.0/linux-x86_64/en-US/firefox-132.0.tar.bz2" -O firefox.tar.bz2
-          tar -xjf firefox.tar.bz2
-          sudo mv firefox /opt/firefox
-          sudo ln -sf /opt/firefox/firefox /usr/bin/firefox
-          firefox --version
-
-      - name: Install GeckoDriver
-        if: matrix.browser == 'firefox'
-        run: |
-          wget https://github.com/mozilla/geckodriver/releases/download/v0.35.0/geckodriver-v0.35.0-linux64.tar.gz
-          tar -xvzf geckodriver-v0.35.0-linux64.tar.gz
-          sudo mv geckodriver /usr/local/bin/
-          geckodriver --version
+        uses: browser-actions/setup-firefox@v1
+        with:
+          firefox-version: 'latest'
 
       - name: Build and Test
         run: mvn clean test -Dbrowser=${{ matrix.browser }}
