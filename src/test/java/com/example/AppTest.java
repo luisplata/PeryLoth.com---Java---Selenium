@@ -23,6 +23,7 @@ public class AppTest extends BaseTest
 
     @BeforeClass
     public void setUp() {
+        super.setUp();
         driver.get(baseUrl);
         wait = new WebDriverWait(driver, Duration.ofSeconds(10));
         driver.manage().timeouts().pageLoadTimeout(Duration.ofSeconds(30));
